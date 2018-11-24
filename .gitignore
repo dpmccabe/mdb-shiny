@@ -1,0 +1,7 @@
+.DS_Store
+.Rproj.user
+*.Rproj
+.Rbuildignore
+.Rhistory
+environment.R
+packrat/lib*/

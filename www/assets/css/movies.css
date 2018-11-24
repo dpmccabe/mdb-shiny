@@ -1,0 +1,222 @@
+nav.navbar {
+  background-color: #131517;
+  border-bottom: #687681 solid 1px
+}
+
+nav.navbar .form-inline > div {
+  margin: 1rem;
+}
+
+nav.navbar .form-inline .form-group {
+  margin: 0;
+}
+
+.shiny-input-container:not(.shiny-input-container-inline) {
+  width: auto;
+}
+
+nav.navbar .shiny-input-container {
+  margin-right: 1rem;
+}
+
+nav.navbar .shiny-input-container label {
+  margin-right: 0.75rem;
+}
+
+label[for="sort_by"] {
+  padding-left: 0;
+}
+
+#movies {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+#movies .card-container {
+  width: 100%;
+}
+
+@media (min-width: 800px) {
+  #movies .card-container {
+    width: 50%;
+  }
+}
+
+@media (min-width: 1200px) {
+  #movies .card-container {
+    width: 33%;
+  }
+}
+
+@media (min-width: 1600px) {
+  #movies .card-container {
+    width: 25%;
+  }
+}
+
+a.card {
+  text-decoration: none;
+}
+
+a.card:active, a.card:focus {
+  outline: none;
+}
+
+#movies .card {
+  margin: 0.5rem;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #4D565F;
+  background-repeat: no-repeat;
+  height: 138px;
+  position: relative;
+  cursor: pointer;
+}
+
+#movies .card:hover, #movies .card:focus, #movies .card:active {
+  background-color: #43515F;
+}
+
+#movies .card-body {
+  margin-left: 92px;
+  padding: 0;
+}
+
+#movies .card-text {
+  position: relative;
+  height: 138px;
+}
+
+#movies .card-text-inner {
+  padding: 0.5rem;
+}
+
+#movies h5 {
+  margin: 0 0 0.5rem 0;
+  color: white;
+}
+
+.year-runtime {
+  color: white;
+  margin: 0;
+  line-height: 1;
+}
+
+.year-runtime span {
+  color: #7C8B9A;
+}
+
+span.year {
+}
+
+span.runtime {
+  font-style: italic;
+}
+
+.rating {
+  position: relative;
+  vertical-align: top;
+  display: inline-block;
+  color: #2F343A;
+  overflow: hidden;
+}
+
+.filled {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #ffc107;
+}
+
+.rating .empty:before, .rating .filled:before {
+  content:"\2605\2605\2605\2605";
+  font-size: 14px;
+}
+
+.stars {
+  margin: 0;
+  color: #8A9AAA;
+  line-height: 1;
+  height: 12px;
+  width: 48px;
+  font-size: 12px;
+}
+
+.stars span {
+  width: 12px;
+  height: 12px;
+  float: left;
+}
+
+.stars .filling {
+  height: 12px;
+}
+
+#movies p.genres {
+  margin: 0;
+  padding: 0.2rem 0.5rem 0.4rem;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #33495F;
+  color: #84A2C0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: lowercase;
+  line-height: 1;
+}
+
+#movies .card:hover p.genres, #movies .card:focus p.genres, #movies .card:active p.genres {
+  background-color: #2B455F;
+}
+
+.popover {
+  max-width: 400px;
+  background-color: transparent;
+}
+
+.popover-body {
+  background-color: #131517;
+  color: #CACBCC;
+  border-radius: 10px;
+}
+
+.close {
+  color: #fff;
+  text-shadow: 0 1px 0 #000;
+}
+
+.close:not(:disabled):not(.disabled):hover {
+  color: #fff;
+}
+
+.popover-body p {
+  font-size: 0.8rem;
+}
+
+.popover button.close {
+  margin-left: 10px;
+}
+
+.popover-body h6 {
+  color: white;
+  margin-bottom: 0;
+}
+
+.popover-body > *:last-child {
+  margin-bottom: 0;
+}
+
+.bs-popover-auto[x-placement^=right] .arrow::before, .bs-popover-right .arrow::before {
+  border-right: none;
+}
+
+.bs-popover-auto[x-placement^=right] .arrow::after, .bs-popover-right .arrow::after {
+  border-right-color: #131517;
+}
