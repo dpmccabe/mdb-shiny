@@ -199,7 +199,7 @@ movies_final <- movies %>%
   select(
     id, title, sort_title, overview, runtime, imdb_id, actors, directors,
     metacritic_score, year, hours, minutes, poster_url, pretty_runtime, genres
-  ) %>% sample_n(20)
+  )
 
 genres <- sort(unique(unlist(movies$genres)))
 
