@@ -20,6 +20,9 @@ $(window).ready(function() {
       var x_score = parseInt($(x).data($.sort_by));
       var y_score = parseInt($(y).data($.sort_by));
 
+      if (Number.isNaN(x_score)) return 1;
+      if (Number.isNaN(y_score)) return -1;
+
       if ($.asc) {
         return x_score - y_score;
       } else {

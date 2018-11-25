@@ -5,3 +5,4 @@
 .Rhistory
 environment.R
 packrat/lib*/
+rsconnect/
