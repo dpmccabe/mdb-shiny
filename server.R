@@ -1,4 +1,6 @@
 server <- function(input, output, session) {
+  movies <- reactiveVal(movies_final)
+
   output$title_filter <- renderUI({
     textInput("title_filter", "Title")
   })
@@ -12,7 +14,7 @@ server <- function(input, output, session) {
     )
   })
 
-  sort_by <- reactiveVal("title")
+  sort_by <- reactiveVal("sort_title")
   sort_desc <- reactiveVal(FALSE)
 
   observeEvent(input$sort_by_trigger, {
@@ -35,8 +37,30 @@ server <- function(input, output, session) {
     }
   })
 
+  is_selected <- reactiveVal(NA)
+  selected_ids <- reactiveVal(integer(0))
+
+  observeEvent(input$is_selected_trigger, {
+    trigger_val <- input$is_selected_trigger$val
+
+    if (trigger_val == "all") {
+    	is_selected(NA)
+    } else if (trigger_val == "yes") {
+    	is_selected(TRUE)
+    } else {
+    	is_selected(FALSE)
+    }
+  })
+
+  observeEvent(input$toggle_selected, {
+  	movies_to_update <- movies()
+  	ix <- which(movies_to_update$id == input$toggle_selected$val)
+  	movies_to_update[ix, "selected"] <- !movies_to_update[ix, "selected"]
+  	movies(movies_to_update)
+  })
+
   movie_to_card <- function(movie) {
-    if (!is.na(movie$runtime)) {
+    if (!is.na(movie$pretty_runtime)) {
       runtime <- list(
         HTML("&nbsp;·&nbsp;"),
         span(class = "runtime", movie$pretty_runtime)
@@ -70,31 +94,43 @@ server <- function(input, output, session) {
 
     if (length(movie$actors[[1]]) > 0) {
       actors <- movie$actors[[1]]
-      cast <- str_c(actors[seq(1, min(length(actors), 8))], collapse = ", ")
+      cast <- str_c(actors, collapse = ", ")
       cast <- glue("<h6>Cast</h6><p>{cast}</p>")
     } else {
       cast <- NULL
     }
 
     if (str_length(movie$overview) > 0) {
-      overview <- p(movie$overview)
+      if (str_length(movie$imdb_id) > 0) {
+        overview <- glue("
+          <p>{movie$overview} (<a href='https://www.imdb.com/title/{movie$imdb_id}'>IMDb</a>)</p>
+        ")
+      } else {
+        overview <- p(movie$overview)
+      }
     } else {
       overview <- NULL
     }
 
     popover_html <- glue("
-      	<button class='close' type='button' data-dismiss='popover'><span>×</span></button>
-      	{overview} {directors} {cast}
+    	{overview} {directors} {cast}
     ") %>% str_replace_all('"', "&quot;")
+
+    badge_classes <- c("badge", "badge-light")
+    if (movie$selected) badge_classes <- c(badge_classes, "selected")
 
     div(
       class = "card-container",
+      span(
+      	class = str_c(badge_classes, collapse = " "),
+      	`data-id` = movie$id,
+      	"+"
+      ),
 
       a(
         class = "card",
         style = glue("background-image: url('{movie$poster_url}')"),
 	      `data-toggle` = "popover",
-	      `data-trigger` = "click",
         role = "button",
         tabindex = 0,
 	      `data-content` = HTML(popover_html),
@@ -130,9 +166,7 @@ server <- function(input, output, session) {
   output$movies <- renderUI({
     req(sort_by(), !is.null(input$title_filter), !is.null(input$genre_filter))
 
-    set.seed(1)
-    # movies_filt <- movies
-    movies_filt <- movies %>% sample_n(10)
+    movies_filt <- movies()
 
     if (str_length(input$genre_filter) > 0) {
       movies_filt <- movies_filt %>%
@@ -146,7 +180,13 @@ server <- function(input, output, session) {
         filter(str_detect(title, coll(input$title_filter, ignore_case = T)))
     }
 
-    movies_filt <- arrange_(movies_filt, sort_by())
+    if (!is.na(is_selected())) {
+      if (is_selected()) {
+        movies_filt <- filter(movies_filt, selected)
+      } else if (!is_selected()) {
+        movies_filt <- filter(movies_filt, !selected)
+      }
+    }
 
     shiny::validate(
       need(
@@ -156,8 +196,16 @@ server <- function(input, output, session) {
       errorClass = "warning"
     )
 
+    movies_filt <- movies_filt %>%
+    	mutate(random = runif(1:n())) %>%
+    	arrange_(sort_by())
+
     list(
     	movies_filt %>%
+    	  select(
+    	    id, title, overview, imdb_id, actors, directors, metacritic_score, year,
+    	    hours, minutes, poster_url, pretty_runtime, genres, selected
+  	    ) %>%
 	      split(1:nrow(.)) %>%
 	      map(movie_to_card),
 	    tags$script("init_popovers();")

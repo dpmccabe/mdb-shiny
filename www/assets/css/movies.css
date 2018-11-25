@@ -36,6 +36,7 @@ label[for="sort_by"] {
 
 #movies .card-container {
   width: 100%;
+  position: relative;
 }
 
 @media (min-width: 800px) {
@@ -65,7 +66,7 @@ a.card:active, a.card:focus {
 }
 
 #movies .card {
-  margin: 0.5rem;
+  margin: 10px;
   border: none;
   border-radius: 10px;
   overflow: hidden;
@@ -74,15 +75,34 @@ a.card:active, a.card:focus {
   height: 138px;
   position: relative;
   cursor: pointer;
+  z-index: 1;
 }
 
-#movies .card:hover, #movies .card:focus, #movies .card:active {
+#movies .card:hover {
   background-color: #43515F;
+}
+
+#movies .card[aria-describedby] {
+  background-color: #131517;
 }
 
 #movies .card-body {
   margin-left: 92px;
   padding: 0;
+}
+
+#movies .card-container span.badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  border-radius: 0 10px;
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+#movies .card-container span.badge:hover, #movies .card-container span.badge.selected {
+  background-color: #ffc107;
 }
 
 #movies .card-text {
@@ -95,7 +115,7 @@ a.card:active, a.card:focus {
 }
 
 #movies h5 {
-  margin: 0 0 0.5rem 0;
+  margin: 0 10px 0.5rem 0;
   color: white;
 }
 
@@ -106,10 +126,7 @@ a.card:active, a.card:focus {
 }
 
 .year-runtime span {
-  color: #7C8B9A;
-}
-
-span.year {
+  color: #97A9BB;
 }
 
 span.runtime {
@@ -172,8 +189,12 @@ span.runtime {
   line-height: 1;
 }
 
-#movies .card:hover p.genres, #movies .card:focus p.genres, #movies .card:active p.genres {
+#movies .card:hover p.genres {
   background-color: #2B455F;
+}
+
+#movies .card[aria-describedby] p.genres {
+  background-color: #000000;
 }
 
 .popover {
@@ -185,15 +206,6 @@ span.runtime {
   background-color: #131517;
   color: #CACBCC;
   border-radius: 10px;
-}
-
-.close {
-  color: #fff;
-  text-shadow: 0 1px 0 #000;
-}
-
-.close:not(:disabled):not(.disabled):hover {
-  color: #fff;
 }
 
 .popover-body p {
@@ -209,14 +221,30 @@ span.runtime {
   margin-bottom: 0;
 }
 
+.popover-body a {
+  color: white;
+}
+
 .popover-body > *:last-child {
   margin-bottom: 0;
 }
 
-.bs-popover-auto[x-placement^=right] .arrow::before, .bs-popover-right .arrow::before {
-  border-right: none;
+.arrow::before, .bs-popover-right .arrow::before {
+  border-right: none !important;
 }
 
-.bs-popover-auto[x-placement^=right] .arrow::after, .bs-popover-right .arrow::after {
-  border-right-color: #131517;
+.arrow::after, .bs-popover-right .arrow::after {
+  border-right-color:  #131517  !important;
+}
+
+.arrow::before, .bs-popover-left .arrow::before {
+  border-left: none !important;
+}
+
+.arrow::after, .bs-popover-left .arrow::after {
+  border-left-color:  #131517  !important;
+}
+
+#movies.shiny-output-error-validation {
+  padding: 1rem;
 }

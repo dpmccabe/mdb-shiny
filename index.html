@@ -26,7 +26,7 @@
 
         <div class="btn-group btn-group-toggle" id="sort_by" data-toggle="buttons">
           <label class="btn btn-primary active">
-            <input id="sort_by_title" type="radio" name="sort_by" autocomplete="off" value="title" checked="" />title
+            <input id="sort_by_title" type="radio" name="sort_by" autocomplete="off" value="sort_title" checked="" />title
           </label>
           <label class="btn btn-primary">
             <input id="sort_by_year" type="radio" name="sort_by" autocomplete="off" value="year" />year
@@ -36,6 +36,27 @@
           </label>
           <label class="btn btn-primary">
             <input id="sort_by_runtime" type="radio" name="sort_by" autocomplete="off" value="runtime" />runtime
+          </label>
+          <label class="btn btn-primary">
+            <input id="sort_by_random" type="radio" name="sort_by" autocomplete="off" value="random" />random
+          </label>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <label class="input-group-text bg-transparent border-0 text-light" for="is_selected">Selected</label>
+        </div>
+
+        <div class="btn-group btn-group-toggle" id="is_selected" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input id="is_selected_all" type="radio" name="is_selected" autocomplete="off" value="all" checked="" />all
+          </label>
+          <label class="btn btn-primary">
+            <input id="is_selected_yes" type="radio" name="is_selected" autocomplete="off" value="yes" />yes
+          </label>
+          <label class="btn btn-primary">
+            <input id="is_selected_no" type="radio" name="is_selected" autocomplete="off" value="no" />no
           </label>
         </div>
       </div>

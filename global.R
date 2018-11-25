@@ -185,13 +185,25 @@ series_genres <- inner_join(
   group_by(series_id) %>%
   summarize(genres = list(genre))
 
-movies <- movies %>%
+movies_final <- movies %>%
   left_join(series_genres, by = "series_id") %>%
   rowwise() %>%
-  mutate(genres = ifelse(is.null(genres.y), list(genres.x), list(genres.y))) %>%
-  select(-genres.x, -genres.y)
+  mutate(
+    actors = list(actors[seq(1, min(length(actors), 8))]),
+    genres = ifelse(is.null(genres.y), list(genres.x), list(genres.y))
+  ) %>%
+  ungroup() %>%
+  mutate(
+    sort_title = gsub("^(The|A|An) (.*)$", '\\2, \\1', title),
+    selected = FALSE
+  ) %>%
+  select(
+    id, title, sort_title, overview, runtime, imdb_id, actors, directors,
+    metacritic_score, year, hours, minutes, poster_url, pretty_runtime, genres,
+    selected
+  ) %>% sample_n(10)
 
 genres <- sort(unique(unlist(movies$genres)))
 
-# rm(movies_coll, series_coll)
-# gc()
+rm(movies_coll, series_coll)
+gc()
