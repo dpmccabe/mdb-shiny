@@ -1,0 +1,13 @@
+name: mdb-shiny
+title: mdb-shiny
+username:
+account: dpmccabe
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 588959
+bundleId: 1719623
+url: https://dpmccabe.shinyapps.io/mdb-shiny/
+when: 1543181152.02779
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Aptfile|Procfile

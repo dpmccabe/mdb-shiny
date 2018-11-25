@@ -14,52 +14,13 @@ server <- function(input, output, session) {
     )
   })
 
-  sort_by <- reactiveVal("sort_title")
-  sort_desc <- reactiveVal(FALSE)
+  movie_to_card <- memoise(function(movie) {
+  	if (str_length(movie$title) < 50) {
+			movie_title <- h5(class = "card-title", movie$title)
+  	} else {
+			movie_title <- h6(class = "card-title", movie$title)
+  	}
 
-  observeEvent(input$sort_by_trigger, {
-    trigger_val <- input$sort_by_trigger$val
-
-    if (sort_by() == "desc(metacritic_score)" && trigger_val == "metacritic_score") {
-      sort_desc(F)
-    } else if (sort_by() != "metacritic_score" && trigger_val == "metacritic_score") {
-      sort_desc(T)
-    } else if (trigger_val == sort_by()) {
-      sort_desc(T)
-    } else {
-      sort_desc(F)
-    }
-
-    if (sort_desc()) {
-      sort_by(as.character(glue("desc({trigger_val})")))
-    } else {
-      sort_by(trigger_val)
-    }
-  })
-
-  is_selected <- reactiveVal(NA)
-  selected_ids <- reactiveVal(integer(0))
-
-  observeEvent(input$is_selected_trigger, {
-    trigger_val <- input$is_selected_trigger$val
-
-    if (trigger_val == "all") {
-    	is_selected(NA)
-    } else if (trigger_val == "yes") {
-    	is_selected(TRUE)
-    } else {
-    	is_selected(FALSE)
-    }
-  })
-
-  observeEvent(input$toggle_selected, {
-  	movies_to_update <- movies()
-  	ix <- which(movies_to_update$id == input$toggle_selected$val)
-  	movies_to_update[ix, "selected"] <- !movies_to_update[ix, "selected"]
-  	movies(movies_to_update)
-  })
-
-  movie_to_card <- function(movie) {
     if (!is.na(movie$pretty_runtime)) {
       runtime <- list(
         HTML("&nbsp;·&nbsp;"),
@@ -116,13 +77,15 @@ server <- function(input, output, session) {
     	{overview} {directors} {cast}
     ") %>% str_replace_all('"', "&quot;")
 
-    badge_classes <- c("badge", "badge-light")
-    if (movie$selected) badge_classes <- c(badge_classes, "selected")
-
     div(
       class = "card-container",
+      `data-title` = movie$sort_title,
+      `data-year` = movie$year,
+      `data-runtime` = movie$runtime,
+      `data-rating` = 100 - movie$metacritic_score,
+
       span(
-      	class = str_c(badge_classes, collapse = " "),
+      	class = "badge badge-light",
       	`data-id` = movie$id,
       	"+"
       ),
@@ -143,7 +106,7 @@ server <- function(input, output, session) {
 
             div(
               class = "card-text-inner",
-              h5(class = "card-title", movie$title),
+              movie_title,
 
               div(
                 class = "year-runtime",
@@ -161,12 +124,12 @@ server <- function(input, output, session) {
         )
       )
     )
-  }
+  })
 
   output$movies <- renderUI({
-    req(sort_by(), !is.null(input$title_filter), !is.null(input$genre_filter))
+    req(!is.null(input$title_filter), !is.null(input$genre_filter))
 
-    movies_filt <- movies()
+    movies_filt <- isolate(movies())
 
     if (str_length(input$genre_filter) > 0) {
       movies_filt <- movies_filt %>%
@@ -180,14 +143,6 @@ server <- function(input, output, session) {
         filter(str_detect(title, coll(input$title_filter, ignore_case = T)))
     }
 
-    if (!is.na(is_selected())) {
-      if (is_selected()) {
-        movies_filt <- filter(movies_filt, selected)
-      } else if (!is_selected()) {
-        movies_filt <- filter(movies_filt, !selected)
-      }
-    }
-
     shiny::validate(
       need(
         nrow(movies_filt) > 0,
@@ -196,15 +151,11 @@ server <- function(input, output, session) {
       errorClass = "warning"
     )
 
-    movies_filt <- movies_filt %>%
-    	mutate(random = runif(1:n())) %>%
-    	arrange_(sort_by())
-
     list(
     	movies_filt %>%
     	  select(
-    	    id, title, overview, imdb_id, actors, directors, metacritic_score, year,
-    	    hours, minutes, poster_url, pretty_runtime, genres, selected
+    	    id, title, sort_title, overview, imdb_id, actors, directors, metacritic_score, year,
+    	    hours, minutes, poster_url, pretty_runtime, genres, runtime
   	    ) %>%
 	      split(1:nrow(.)) %>%
 	      map(movie_to_card),

@@ -194,9 +194,10 @@ movies_final <- movies %>%
   ) %>%
   ungroup() %>%
   mutate(
-    sort_title = gsub("^(The|A|An) (.*)$", '\\2, \\1', title),
+    sort_title = rank(gsub("^(The|A|An) (.*)$", '\\2, \\1', title)),
     selected = FALSE
   ) %>%
+  arrange(sort_title) %>%
   select(
     id, title, sort_title, overview, runtime, imdb_id, actors, directors,
     metacritic_score, year, hours, minutes, poster_url, pretty_runtime, genres,
