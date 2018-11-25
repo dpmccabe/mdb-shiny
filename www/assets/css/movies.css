@@ -3,28 +3,8 @@ nav.navbar {
   border-bottom: #687681 solid 1px
 }
 
-nav.navbar .form-inline > div {
+nav.navbar input, nav.navbar select, nav.navbar .input-group {
   margin: 1rem;
-}
-
-nav.navbar .form-inline .form-group {
-  margin: 0;
-}
-
-.shiny-input-container:not(.shiny-input-container-inline) {
-  width: auto;
-}
-
-nav.navbar .shiny-input-container {
-  margin-right: 1rem;
-}
-
-nav.navbar .shiny-input-container label {
-  margin-right: 0.75rem;
-}
-
-label[for="sort_by"] {
-  padding-left: 0;
 }
 
 #movies {
@@ -102,7 +82,7 @@ a.card:active, a.card:focus {
   padding-bottom: 7px;
 }
 
-#movies .card-container span.badge:hover, #movies .card-container span.badge.selected {
+#movies .card-container span.badge:hover, #movies .card-container.selected span.badge {
   background-color: #ffc107;
 }
 

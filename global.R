@@ -8,7 +8,6 @@ library(rvest)
 library(stringr)
 library(purrr)
 library(curl)
-library(memoise)
 library(tidyr)
 
 if (file.exists("environment.R")) source("environment.R")
@@ -194,15 +193,13 @@ movies_final <- movies %>%
   ) %>%
   ungroup() %>%
   mutate(
-    sort_title = rank(gsub("^(The|A|An) (.*)$", '\\2, \\1', title)),
-    selected = FALSE
+    sort_title = rank(gsub("^(The|A|An) (.*)$", '\\2, \\1', title))
   ) %>%
   arrange(sort_title) %>%
   select(
     id, title, sort_title, overview, runtime, imdb_id, actors, directors,
-    metacritic_score, year, hours, minutes, poster_url, pretty_runtime, genres,
-    selected
-  )
+    metacritic_score, year, hours, minutes, poster_url, pretty_runtime, genres
+  )# %>% sample_n(10)
 
 genres <- sort(unique(unlist(movies$genres)))
 

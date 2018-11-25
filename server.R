@@ -1,20 +1,5 @@
 server <- function(input, output, session) {
-  movies <- reactiveVal(movies_final)
-
-  output$title_filter <- renderUI({
-    textInput("title_filter", "Title")
-  })
-
-  output$genre_filter <- renderUI({
-    selectInput(
-      "genre_filter",
-      label = "Genre",
-      choices = c("", genres),
-      selectize = F
-    )
-  })
-
-  movie_to_card <- memoise(function(movie) {
+  movie_to_card <- function(movie) {
   	if (str_length(movie$title) < 50) {
 			movie_title <- h5(class = "card-title", movie$title)
   	} else {
@@ -78,8 +63,10 @@ server <- function(input, output, session) {
     ") %>% str_replace_all('"', "&quot;")
 
     div(
-      class = "card-container",
-      `data-title` = movie$sort_title,
+      class = "card-container shown",
+      `data-title` = movie$title,
+      `data-genre` = genres,
+      `data-sort_title` = movie$sort_title,
       `data-year` = movie$year,
       `data-runtime` = movie$runtime,
       `data-rating` = 100 - movie$metacritic_score,
@@ -124,32 +111,10 @@ server <- function(input, output, session) {
         )
       )
     )
-  })
+  }
 
   output$movies <- renderUI({
-    req(!is.null(input$title_filter), !is.null(input$genre_filter))
-
-    movies_filt <- isolate(movies())
-
-    if (str_length(input$genre_filter) > 0) {
-      movies_filt <- movies_filt %>%
-        rowwise() %>%
-        filter(input$genre_filter %in% genres) %>%
-        ungroup()
-    }
-
-    if (str_length(input$title_filter) > 0) {
-      movies_filt <- movies_filt %>%
-        filter(str_detect(title, coll(input$title_filter, ignore_case = T)))
-    }
-
-    shiny::validate(
-      need(
-        nrow(movies_filt) > 0,
-        "No results."
-      ),
-      errorClass = "warning"
-    )
+    movies_filt <- movies_final
 
     list(
     	movies_filt %>%

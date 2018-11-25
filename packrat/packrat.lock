@@ -148,12 +148,6 @@ Source: CRAN
 Version: 1.5
 Hash: bdc4d48c3135e8f3b399536ddf160df4
 
-Package: memoise
-Source: CRAN
-Version: 1.1.0
-Hash: 410fcd334bc626db100237cc1370f2e9
-Requires: digest
-
 Package: mime
 Source: CRAN
 Version: 0.5

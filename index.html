@@ -14,10 +14,31 @@
 </head>
 
 <body class="bg-dark">
-  <nav class="navbar text-light">
-    <div class="form-inline p-0">
-      {{ title_filter }}
-      {{ genre_filter }}
+  <nav class="navbar text-light p-0">
+    <div class="form-inline">
+      <input type="text" class="form-control mr-3" id="title_filter" placeholder="Title" />
+
+      <select id="genre_filter" class="form-control shiny-bound-input">
+        <option value="" selected="">Genre</option>
+        <option value="Action">Action</option>
+        <option value="Adventure">Adventure</option>
+        <option value="Animation">Animation</option>
+        <option value="Comedy">Comedy</option>
+        <option value="Crime">Crime</option>
+        <option value="Documentary">Documentary</option>
+        <option value="Drama">Drama</option>
+        <option value="Family">Family</option>
+        <option value="Fantasy">Fantasy</option>
+        <option value="History">History</option>
+        <option value="Horror">Horror</option>
+        <option value="Music">Music</option>
+        <option value="Mystery">Mystery</option>
+        <option value="Romance">Romance</option>
+        <option value="Science Fiction">Science Fiction</option>
+        <option value="Thriller">Thriller</option>
+        <option value="War">War</option>
+        <option value="Western">Western</option>
+      </select>
       
       <div class="input-group">
         <div class="input-group-prepend">
@@ -26,7 +47,7 @@
 
         <div class="btn-group btn-group-toggle" id="sort_by" data-toggle="buttons">
           <label class="btn btn-primary active">
-            <input id="sort_by_title" type="radio" name="sort_by" autocomplete="off" value="title" checked="" />title
+            <input id="sort_by_title" type="radio" name="sort_by" autocomplete="off" value="sort_title" checked="" />title
           </label>
           <label class="btn btn-primary">
             <input id="sort_by_year" type="radio" name="sort_by" autocomplete="off" value="year" />year
