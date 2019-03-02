@@ -37,15 +37,19 @@ $(window).ready(function() {
 
   $(document).on('keyup change', '#title_filter, #genre_filter', function() {
     filter_movies();
-  })
+  });
 
   $(document).on('click', '#movies .card-container > span.badge', function() {
     $(this).parents('.card-container').toggleClass('selected');
     filter_movies();
   });
 
-  $(document).on('click', 'button[data-dismiss="popover"]', function() {
-    $(this).parents('.popover').popover('hide');
+  $(document).on('click', '.popover', function() {
+    $(this).popover('hide');
+  });
+
+  $(document).on('show.bs.popover', '#movies a[data-toggle=popover]', function () {
+    $('#movies a[data-toggle=popover]').not(this).popover('hide');
   });
 });
 
@@ -72,7 +76,7 @@ filter_movies = function() {
   });
 
   var is_selected = $('input[name=is_selected]:checked').val();
-  
+
   if (is_selected === 'yes') {
     $('#movies .card-container.shown:not(.selected)').removeClass('shown');
   } else if (is_selected === 'no') {

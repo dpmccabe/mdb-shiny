@@ -154,6 +154,7 @@ if (length(movie_ids_to_save) > 0) {
 }
 
 movies <- as_tibble(movies_coll$find()) %>%
+  filter(id %in% list_movie_ids) %>%
   mutate(
     year = as.integer(str_sub(release_date, 1, 4)),
     poster_url = glue("{configuration$images$base_url}w92{poster_path}"),
@@ -204,4 +205,3 @@ movies_final <- movies %>%
 genres <- sort(unique(unlist(movies$genres)))
 
 rm(movies_coll, series_coll)
-gc()
