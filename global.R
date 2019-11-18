@@ -13,36 +13,56 @@ library(tidyr)
 if (file.exists("environment.R")) source("environment.R")
 
 tmdb_key <- Sys.getenv("TMDB_KEY")
+tmdb_token <- Sys.getenv("TMDB_TOKEN")
 mongo_uri <- Sys.getenv("MONGOLAB_URI")
 
-tmdb_get <- function(path) {
-  uri <- modify_url(
-    "https://api.themoviedb.org",
-    path = glue("3/{path}"),
-    query = list(api_key = tmdb_key)
-  )
+tmdb_get <- function(version, path, simplifyDataFrame = TRUE) {
+  if (version == 3) {
+    uri <- modify_url(
+      "https://api.themoviedb.org",
+      path = glue("3/{path}"),
+      query = list(api_key = tmdb_key)
+    )
 
-  resp <- GET(uri)
-  jsonlite::fromJSON(content(resp, type = "text", encoding = "UTF-8"))
+    resp <- GET(uri)
+  } else {
+    uri <- modify_url(
+      "https://api.themoviedb.org",
+      path = glue("4/{path}")
+    )
+
+    resp <- GET(uri, add_headers(Authorization = glue("Bearer {tmdb_token}")))
+  }
+
+  jsonlite::fromJSON(content(resp, type = "text", encoding = "UTF-8"), simplifyDataFrame = simplifyDataFrame)
 }
 
-configuration <- tmdb_get("configuration")
+configuration <- tmdb_get(3, "configuration")
 secure_base_url <- configuration$images$secure_base_url
 poster_sizes <- unlist(configuration$images$poster_sizes)
 backdrop_sizes <- unlist(configuration$images$backdrop_sizes)
 
-list_movie_ids <- tmdb_get("list/3492") %>%
-  as.data.frame() %>%
-  as_tibble() %>%
-  filter(items.media_type == "movie") %>%
-  pull(items.id)
+n_in_list <- tmdb_get(4, "list/3492")$total_results
+
+list_movies_list <- flatten(map(seq_len(ceiling(n_in_list / 20)), function(page) {
+  r <- tmdb_get(4, glue("list/3492?page={page}"), simplifyDataFrame = FALSE)
+  r$results
+}))
+
+list_movie_ids <- reduce(list_movies_list, function(acc, m) {
+  if (m$media_type == "movie") {
+    return(c(acc, m$id))
+  } else {
+    return(acc)
+  }
+}, .init = list())
 
 movies_coll <- mongo("movies", url = mongo_uri)
 series_coll <- mongo("series", url = mongo_uri)
 
 saved_movie_ids <- movies_coll$distinct("id")
 
-movie_ids_to_save <- sample(setdiff(list_movie_ids, saved_movie_ids))
+movie_ids_to_save <- sample(setdiff(unlist(list_movie_ids), saved_movie_ids))
 
 if (length(movie_ids_to_save) > 0) {
   saved_series_ids <- series_coll$distinct("id")
@@ -75,7 +95,7 @@ if (length(movie_ids_to_save) > 0) {
   )
 
   for (id in movie_ids_to_save) {
-    movie <- tmdb_get(glue("movie/{id}"))
+    movie <- tmdb_get(3, glue("movie/{id}"))
     message(movie$title)
     movie_df <- as_tibble(compact(
       movie[c("id", "title", "tagline", "overview", "backdrop_path", "poster_path", "runtime", "imdb_id", "release_date")]
@@ -97,7 +117,7 @@ if (length(movie_ids_to_save) > 0) {
     genres <- as_tibble(movie$genres)$name
     movie_df$genres <- list(genres)
 
-    credits <- tmdb_get(glue("movie/{id}/credits"))
+    credits <- tmdb_get(3, glue("movie/{id}/credits"))
 
     actors <- as_tibble(credits$cast)
     movie_df$actors <- list(actors$name)
