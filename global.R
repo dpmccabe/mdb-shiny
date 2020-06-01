@@ -62,7 +62,7 @@ series_coll <- mongo("series", url = mongo_uri)
 
 saved_movie_ids <- movies_coll$distinct("id")
 
-movie_ids_to_save <- sample(setdiff(unlist(list_movie_ids), saved_movie_ids))
+movie_ids_to_save <- setdiff(unlist(list_movie_ids), saved_movie_ids)
 
 if (length(movie_ids_to_save) > 0) {
   saved_series_ids <- series_coll$distinct("id")
