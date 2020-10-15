@@ -3,6 +3,6 @@
 *.Rproj
 .Rbuildignore
 .Rhistory
-environment.R
-packrat/lib*/
+.Renviron
+renv/lib*/
 rsconnect/

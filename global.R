@@ -10,8 +10,6 @@ library(purrr)
 library(curl)
 library(tidyr)
 
-if (file.exists("environment.R")) source("environment.R")
-
 tmdb_key <- Sys.getenv("TMDB_KEY")
 tmdb_token <- Sys.getenv("TMDB_TOKEN")
 mongo_uri <- Sys.getenv("MONGOLAB_URI")
